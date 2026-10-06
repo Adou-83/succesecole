@@ -1,0 +1,128 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}
+{% if object %}Modifier le devoir{% else %}Créer un devoir{% endif %} - Succès École
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold">
+                {% if object %}✏️ Modifier le devoir{% else %}📝 Créer un devoir{% endif %}
+            </h1>
+            <p class="text-muted mb-0">
+                {% if object %}
+                    Modifiez les consignes et paramètres du devoir.
+                {% else %}
+                    Créez un devoir à partir d'un exercice.
+                {% endif %}
+            </p>
+        </div>
+
+        <a href="{% url 'liste_devoirs' %}" class="btn btn-outline-secondary">
+            ← Retour
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="row g-3">
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Exercice</label>
+                        {{ form.exercice }}
+                        {% for error in form.exercice.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Titre du devoir</label>
+                        {{ form.titre }}
+                        {% for error in form.titre.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Consignes</label>
+                        {{ form.description }}
+                        {% for error in form.description.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Date limite</label>
+                        {{ form.date_limite }}
+                        {% for error in form.date_limite.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-md-6 d-flex align-items-center">
+                        <div class="form-check mt-4">
+                            {{ form.actif }}
+                            <label class="form-check-label fw-bold">
+                                Devoir actif
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Document du devoir</label>
+                        {{ form.document }}
+
+                        {% if object and object.document %}
+                            <div class="mt-2">
+                                <span class="text-muted">Document actuel :</span>
+                                <a href="{{ object.document.url }}" target="_blank">
+                                    📄 Voir le document
+                                </a>
+                            </div>
+                        {% endif %}
+
+                        {% for error in form.document.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <hr class="my-4">
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        {% if object %}
+                            💾 Enregistrer les modifications
+                        {% else %}
+                            📝 Créer le devoir
+                        {% endif %}
+                    </button>
+
+                    <a href="{% url 'liste_devoirs' %}" class="btn btn-outline-secondary">
+                        Annuler
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

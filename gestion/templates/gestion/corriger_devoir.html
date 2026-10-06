@@ -1,0 +1,82 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}Corriger le devoir - Succès École{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+    <h1 class="fw-bold">Correction du devoir</h1>
+    <p class="text-muted">
+        {{ devoir.titre }}
+    </p>
+</div>
+
+<div class="card shadow-sm border-0">
+
+```
+<div class="card-body">
+
+    <div class="alert alert-light border">
+        <strong>Élève :</strong>
+        {{ soumission.eleve.username }}
+        <br>
+        <strong>Devoir :</strong>
+        {{ devoir.titre }}
+        <br>
+        <strong>Date de soumission :</strong>
+        {{ soumission.date_soumission|date:"d/m/Y H:i" }}
+    </div>
+
+    {% if soumission.commentaire_eleve %}
+    <div class="mb-4">
+        <h5>Commentaire de l'élève</h5>
+        <div class="p-3 bg-light rounded">
+            {{ soumission.commentaire_eleve }}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if soumission.fichier %}
+    <div class="mb-4">
+        <a
+            href="{{ soumission.fichier.url }}"
+            class="btn btn-outline-primary"
+            target="_blank"
+        >
+            📎 Consulter le fichier remis
+        </a>
+    </div>
+    {% endif %}
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <div class="mt-3">
+
+            <button
+                type="submit"
+                class="btn btn-success"
+            >
+                ✅ Enregistrer la correction
+            </button>
+
+            <a
+                href="{% url 'liste_devoirs' %}"
+                class="btn btn-secondary"
+            >
+                Retour
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+```
+
+</div>
+
+{% endblock %}

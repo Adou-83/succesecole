@@ -1,0 +1,20 @@
+ {% extends 'gestion/base.html' %}
+
+{% block title %}Exercices{% endblock %}
+
+{% block content %}
+<h2>Liste des Exercices</h2>
+<div class="list-group">
+  {% for ex in exercices %}
+    <div class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <strong>{{ ex.titre }}</strong><br>
+        <small>{{ ex.description }}</small>
+      </div>
+      <a href="{% url 'soumettre_devoir' ex.id %}" class="btn btn-sm btn-success">Soumettre</a>
+    </div>
+  {% empty %}
+    <p>Aucun exercice disponible.</p>
+  {% endfor %}
+</div>
+{% endblock %}

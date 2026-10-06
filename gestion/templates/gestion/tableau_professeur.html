@@ -1,0 +1,380 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}Espace professeur - Succès École{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- EN-TÊTE -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold">👨‍🏫 Espace professeur</h1>
+            <p class="text-muted mb-0">
+                Bienvenue {{ user.username }}. Gérez vos cours, exercices et devoirs.
+            </p>
+        </div>
+
+        <div>
+            <a href="{% url 'creer_cours' %}" class="btn btn-primary">
+                ➕ Nouveau cours
+            </a>
+        </div>
+    </div>
+
+
+    <!-- STATISTIQUES -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="text-muted small">
+                        📚 Mes cours
+                    </div>
+
+                    <div class="display-6 fw-bold">
+                        {{ nombre_cours }}
+                    </div>
+
+                    <a href="{% url 'liste_cours' %}" class="small">
+                        Voir mes cours →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="text-muted small">
+                        ✏️ Exercices
+                    </div>
+
+                    <div class="display-6 fw-bold">
+                        {{ nombre_exercices }}
+                    </div>
+
+                    <a href="{% url 'liste_exercices' %}" class="small">
+                        Voir les exercices →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="text-muted small">
+                        📝 Devoirs
+                    </div>
+
+                    <div class="display-6 fw-bold">
+                        {{ nombre_devoirs }}
+                    </div>
+
+                    <a href="{% url 'liste_devoirs' %}" class="small">
+                        Voir les devoirs →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="text-muted small">
+                        📥 Copies à corriger
+                    </div>
+
+                    <div class="display-6 fw-bold text-warning">
+                        {{ copies_a_corriger }}
+                    </div>
+
+                    <span class="small text-muted">
+                        Soumissions en attente
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ACTIONS RAPIDES -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                ⚡ Actions rapides
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <a href="{% url 'creer_cours' %}"
+                       class="btn btn-outline-primary w-100 py-3">
+
+                        📚
+                        <br>
+                        Créer un cours
+
+                    </a>
+                </div>
+
+
+                <div class="col-md-4">
+                    <a href="{% url 'creer_exercice' %}"
+                       class="btn btn-outline-success w-100 py-3">
+
+                        ✏️
+                        <br>
+                        Créer un exercice
+
+                    </a>
+                </div>
+
+
+                <div class="col-md-4">
+                    <a href="{% url 'creer_devoir' %}"
+                       class="btn btn-outline-warning w-100 py-3">
+
+                        📝
+                        <br>
+                        Créer un devoir
+
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MES DEVOIRS -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">
+                📝 Mes derniers devoirs
+            </h5>
+        </div>
+
+        <div class="card-body p-0">
+
+            {% if devoirs_recents %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+                                <th>Devoir</th>
+                                <th>Classe</th>
+                                <th>Matière</th>
+                                <th>Date limite</th>
+                                <th>Copies</th>
+                                <th>Actions</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for devoir in devoirs_recents %}
+
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            {{ devoir.titre }}
+                                        </strong>
+
+                                        {% if not devoir.actif %}
+                                            <span class="badge bg-secondary">
+                                                Inactif
+                                            </span>
+                                        {% endif %}
+                                    </td>
+
+
+                                    <td>
+                                        {% if devoir.exercice.cours.classe %}
+                                            {{ devoir.exercice.cours.classe.nom }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </td>
+
+
+                                    <td>
+                                        {% if devoir.exercice.cours.matiere %}
+                                            {{ devoir.exercice.cours.matiere.nom }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </td>
+
+
+                                    <td>
+                                        {{ devoir.date_limite|date:"d/m/Y" }}
+                                    </td>
+
+
+                                    <td>
+                                        <span class="badge bg-primary">
+                                            {{ devoir.nombre_soumissions }}
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+
+                                        <div class="d-flex gap-1">
+
+                                            <a href="{% url 'copies_devoir' devoir.id %}"
+                                               class="btn btn-sm btn-outline-primary">
+                                                📄 Copies
+                                            </a>
+
+                                            <a href="{% url 'modifier_devoir' devoir.id %}"
+                                               class="btn btn-sm btn-outline-secondary">
+                                                ✏️
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="text-center py-5">
+
+                    <div class="display-5 mb-3">
+                        📝
+                    </div>
+
+                    <h5>
+                        Aucun devoir pour le moment
+                    </h5>
+
+                    <p class="text-muted">
+                        Commencez par créer votre premier devoir.
+                    </p>
+
+                    <a href="{% url 'creer_devoir' %}"
+                       class="btn btn-primary">
+                        ➕ Créer un devoir
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- DERNIERS COURS -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">
+                📚 Mes derniers cours
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            {% if cours_recents %}
+
+                <div class="row g-3">
+
+                    {% for cours in cours_recents %}
+
+                        <div class="col-md-4">
+
+                            <div class="card h-100 border">
+
+                                <div class="card-body">
+
+                                    <h5 class="fw-bold">
+                                        {{ cours.titre }}
+                                    </h5>
+
+                                    <p class="small text-muted mb-2">
+
+                                        {% if cours.matiere %}
+                                            📖 {{ cours.matiere.nom }}
+                                        {% endif %}
+
+                                        {% if cours.classe %}
+                                            · 🎓 {{ cours.classe.nom }}
+                                        {% endif %}
+
+                                    </p>
+
+                                    <p class="text-muted">
+                                        {{ cours.description|truncatewords:20 }}
+                                    </p>
+
+                                    <a href="{% url 'detail_cours' cours.id %}"
+                                       class="btn btn-sm btn-outline-success">
+                                        Voir le cours →
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="text-center py-4">
+
+                    <p class="text-muted mb-3">
+                        Vous n'avez encore créé aucun cours.
+                    </p>
+
+                    <a href="{% url 'creer_cours' %}"
+                       class="btn btn-success">
+                        ➕ Créer mon premier cours
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

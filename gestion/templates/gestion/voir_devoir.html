@@ -1,0 +1,189 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}{{ devoir.titre }} - Succès École{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+```
+<div class="mb-4">
+    <a href="{% url 'liste_devoirs' %}" class="btn btn-outline-secondary">
+        ← Retour aux devoirs
+    </a>
+</div>
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-body p-4">
+
+        <div class="mb-3">
+
+            {% if devoir.exercice.cours.matiere %}
+                <span class="badge bg-primary">
+                    📖 {{ devoir.exercice.cours.matiere.nom }}
+                </span>
+            {% endif %}
+
+            {% if devoir.exercice.cours.classe %}
+                <span class="badge bg-secondary">
+                    🎓 {{ devoir.exercice.cours.classe.nom }}
+                </span>
+            {% endif %}
+
+        </div>
+
+        <h1 class="fw-bold">{{ devoir.titre }}</h1>
+
+        <p class="lead text-muted">
+            {{ devoir.description }}
+        </p>
+
+        <div class="alert alert-warning">
+            <strong>📅 Date limite :</strong>
+            {{ devoir.date_limite|date:"d/m/Y" }}
+        </div>
+
+    </div>
+
+</div>
+
+<!-- EXERCICE -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">📖 Énoncé</h5>
+    </div>
+
+    <div class="card-body p-4">
+
+        <h4 class="fw-bold">
+            {{ devoir.exercice.titre }}
+        </h4>
+
+        <div class="mt-3" style="white-space: pre-line; line-height: 1.8;">
+            {{ devoir.exercice.consigne }}
+        </div>
+
+        {% if devoir.exercice.document %}
+            <hr>
+            <a href="{{ devoir.exercice.document.url }}"
+               target="_blank"
+               class="btn btn-outline-primary">
+                📄 Ouvrir le document
+            </a>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- SOUMISSION -->
+
+{% if soumission %}
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">✅ Ma soumission</h5>
+        </div>
+
+        <div class="card-body">
+
+            <p>
+                <strong>Date d'envoi :</strong>
+                {{ soumission.date_soumission|date:"d/m/Y à H:i" }}
+            </p>
+
+            <p>
+                <strong>Statut :</strong>
+
+                {% if soumission.statut == "corrige" %}
+                    <span class="badge bg-success">Corrigé</span>
+                {% elif soumission.statut == "en_retard" %}
+                    <span class="badge bg-danger">En retard</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">En attente de correction</span>
+                {% endif %}
+            </p>
+
+            {% if soumission.fichier %}
+                <a href="{{ soumission.fichier.url }}"
+                   target="_blank"
+                   class="btn btn-outline-primary">
+                    📄 Voir ma copie
+                </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- CORRECTION -->
+
+    {% if soumission.correction %}
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">📊 Ma correction</h5>
+            </div>
+
+            <div class="card-body">
+
+                <div class="display-5 fw-bold mb-3">
+                    {{ soumission.correction.note }}/20
+                </div>
+
+                {% if soumission.correction.commentaire %}
+                    <h6 class="fw-bold">💬 Commentaire du professeur</h6>
+
+                    <div class="alert alert-light border">
+                        {{ soumission.correction.commentaire }}
+                    </div>
+                {% endif %}
+
+                {% if soumission.correction.fichier_corrige %}
+                    <a href="{{ soumission.correction.fichier_corrige.url }}"
+                       target="_blank"
+                       class="btn btn-outline-success">
+                        📄 Voir la correction
+                    </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+{% else %}
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body text-center p-5">
+
+            <div class="display-4 mb-3">📤</div>
+
+            <h3>Tu n'as pas encore soumis ce devoir</h3>
+
+            <p class="text-muted">
+                Prépare ta copie puis envoie-la avant la date limite.
+            </p>
+
+            <a href="{% url 'soumettre_devoir' devoir.exercice.id %}"
+               class="btn btn-success btn-lg">
+                📤 Soumettre mon devoir
+            </a>
+
+        </div>
+
+    </div>
+
+{% endif %}
+```
+
+</div>
+
+{% endblock %}

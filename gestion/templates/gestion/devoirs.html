@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>📚 Mes Devoirs</h2>
+
+    {% if devoirs %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Description</th>
+                    <th>Date limite</th>
+                    <th>Fichier</th>
+                    <th>Correction</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for devoir in devoirs %}
+                    <tr>
+                        <td>{{ devoir.titre }}</td>
+                        <td>{{ devoir.description }}</td>
+                        <td>{{ devoir.date_limite }}</td>
+                        <td>
+                            {% if devoir.fichier %}
+                                <a href="{{ devoir.fichier.url }}" target="_blank">📂 Télécharger</a>
+                            {% else %}
+                                Aucun fichier
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if devoir.correction %}
+                                ✅ <a href="{{ devoir.correction.url }}" target="_blank">Voir la correction</a>
+                            {% else %}
+                                ⏳ En attente
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Aucun devoir pour le moment.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,231 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}Suivi de mes enfants - Succès École{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+```
+<div class="mb-4">
+    <h1 class="fw-bold">👨‍👩‍👧 Suivi de mes enfants</h1>
+    <p class="text-muted mb-0">
+        Suivez les apprentissages, devoirs et résultats scolaires de vos enfants.
+    </p>
+</div>
+
+{% if enfants_data %}
+
+    {% for data in enfants_data %}
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+                        <h4 class="mb-0">
+                            👨‍🎓 {{ data.enfant.username }}
+                        </h4>
+
+                        {% if data.enfant.classe %}
+                            <small>
+                                Classe : {{ data.enfant.classe.nom }}
+                            </small>
+                        {% endif %}
+                    </div>
+
+                    {% if data.moyenne != None %}
+                        <div class="text-end">
+                            <small>Moyenne</small>
+                            <div class="fs-4 fw-bold">
+                                {{ data.moyenne|floatformat:2 }}/20
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <div class="card-body">
+
+                <!-- STATISTIQUES -->
+
+                <div class="row g-3 mb-4">
+
+                    <div class="col-md-3">
+                        <div class="card border h-100">
+                            <div class="card-body">
+                                <div class="text-muted small">
+                                    📚 Cours
+                                </div>
+                                <div class="fs-3 fw-bold">
+                                    {{ data.nombre_cours }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card border h-100">
+                            <div class="card-body">
+                                <div class="text-muted small">
+                                    📝 Devoirs
+                                </div>
+                                <div class="fs-3 fw-bold">
+                                    {{ data.nombre_devoirs }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card border h-100">
+                            <div class="card-body">
+                                <div class="text-muted small">
+                                    📤 Soumis
+                                </div>
+                                <div class="fs-3 fw-bold">
+                                    {{ data.nombre_soumissions }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card border h-100">
+                            <div class="card-body">
+                                <div class="text-muted small">
+                                    ✅ Corrigés
+                                </div>
+                                <div class="fs-3 fw-bold text-success">
+                                    {{ data.nombre_corriges }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- DERNIERS RESULTATS -->
+
+                <h5 class="fw-bold mb-3">
+                    📊 Derniers résultats
+                </h5>
+
+                {% if data.soumissions_recentes %}
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover align-middle">
+
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Devoir</th>
+                                    <th>Matière</th>
+                                    <th>Date</th>
+                                    <th>Statut</th>
+                                    <th>Note</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                {% for soumission in data.soumissions_recentes %}
+
+                                    <tr>
+
+                                        <td>
+                                            <strong>
+                                                {{ soumission.devoir.titre }}
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            {% if soumission.devoir.exercice.cours.matiere %}
+                                                {{ soumission.devoir.exercice.cours.matiere.nom }}
+                                            {% else %}
+                                                —
+                                            {% endif %}
+                                        </td>
+
+                                        <td>
+                                            {{ soumission.date_soumission|date:"d/m/Y" }}
+                                        </td>
+
+                                        <td>
+
+                                            {% if soumission.correction %}
+                                                <span class="badge bg-success">
+                                                    Corrigé
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark">
+                                                    En attente
+                                                </span>
+                                            {% endif %}
+
+                                        </td>
+
+                                        <td>
+
+                                            {% if soumission.correction %}
+                                                <strong>
+                                                    {{ soumission.correction.note }}/20
+                                                </strong>
+                                            {% else %}
+                                                —
+                                            {% endif %}
+
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="text-center py-4">
+                        <p class="text-muted mb-0">
+                            Aucun devoir soumis pour le moment.
+                        </p>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body text-center py-5">
+
+            <div class="display-3 mb-3">👨‍👩‍👧</div>
+
+            <h3>Aucun enfant associé</h3>
+
+            <p class="text-muted">
+                Aucun élève n'est actuellement associé à votre compte parent.
+            </p>
+
+        </div>
+
+    </div>
+
+{% endif %}
+```
+
+</div>
+
+{% endblock %}

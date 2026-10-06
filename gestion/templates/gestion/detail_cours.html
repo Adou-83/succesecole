@@ -1,0 +1,262 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}{{ cours.titre }} - Succès École{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+```
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <a href="{% url 'liste_cours' %}" class="btn btn-outline-secondary">
+        ← Retour aux cours
+    </a>
+
+    {% if user.role == "prof" and cours.professeur == user %}
+        <div class="d-flex gap-2">
+            <a href="{% url 'modifier_cours' cours.id %}" class="btn btn-outline-primary">
+                ✏️ Modifier
+            </a>
+
+            <a href="{% url 'supprimer_cours' cours.id %}" class="btn btn-outline-danger">
+                🗑️ Supprimer
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+
+
+<!-- INFORMATIONS DU COURS -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-body p-4">
+
+        <div class="mb-3">
+
+            {% if cours.matiere %}
+                <span class="badge bg-primary">
+                    📖 {{ cours.matiere.nom }}
+                </span>
+            {% endif %}
+
+            {% if cours.classe %}
+                <span class="badge bg-secondary">
+                    🎓 {{ cours.classe.nom }}
+                </span>
+            {% endif %}
+
+        </div>
+
+        <h1 class="fw-bold mb-3">
+            {{ cours.titre }}
+        </h1>
+
+        <p class="lead text-muted">
+            {{ cours.description }}
+        </p>
+
+        <hr>
+
+        <div class="small text-muted">
+
+            📅 Publié le {{ cours.date_publication|date:"d/m/Y à H:i" }}
+
+            {% if cours.professeur %}
+                · 👨‍🏫 {{ cours.professeur.username }}
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- CONTENU DU COURS -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">📖 Leçon</h4>
+    </div>
+
+    <div class="card-body p-4">
+
+        {% if cours.contenu %}
+
+            <div style="white-space: pre-line; line-height: 1.8;">
+                {{ cours.contenu }}
+            </div>
+
+        {% else %}
+
+            <div class="text-center py-4">
+
+                <div class="display-5 mb-3">
+                    📖
+                </div>
+
+                <p class="text-muted mb-0">
+                    Le contenu détaillé de cette leçon n'a pas encore été ajouté.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- DOCUMENT DU COURS -->
+
+{% if cours.document %}
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="fw-bold">
+                📎 Support pédagogique
+            </h5>
+
+            <p class="text-muted">
+                Un document complémentaire est disponible pour cette leçon.
+            </p>
+
+            <a href="{{ cours.document.url }}"
+               target="_blank"
+               class="btn btn-outline-primary">
+                📄 Ouvrir le document
+            </a>
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+
+<!-- EXERCICES -->
+
+<div class="card shadow-sm border-0">
+
+    <div class="card-header bg-success text-white">
+        <h4 class="mb-0">
+            ✏️ Exercices et devoirs
+        </h4>
+    </div>
+
+    <div class="card-body">
+
+        {% with exercices=cours.exercices.all %}
+
+            {% if exercices %}
+
+                <div class="row g-3">
+
+                    {% for exercice in exercices %}
+
+                        <div class="col-md-6">
+
+                            <div class="card border h-100">
+
+                                <div class="card-body">
+
+                                    <h5 class="fw-bold">
+                                        {{ exercice.titre }}
+                                    </h5>
+
+                                    <p class="text-muted">
+                                        {{ exercice.consigne|truncatewords:30 }}
+                                    </p>
+
+
+                                    {% if exercice.document %}
+
+                                        <a href="{{ exercice.document.url }}"
+                                           target="_blank"
+                                           class="btn btn-sm btn-outline-primary mb-3">
+                                            📄 Document de l'exercice
+                                        </a>
+
+                                    {% endif %}
+
+
+                                    {% with devoirs=exercice.devoirs.all %}
+
+                                        {% if devoirs %}
+
+                                            <div class="border-top pt-3">
+
+                                                <div class="small text-muted mb-2">
+                                                    📝 Devoirs associés
+                                                </div>
+
+                                                {% for devoir in devoirs %}
+
+                                                    <a href="{% url 'voir_devoir' devoir.id %}"
+                                                       class="btn btn-sm btn-outline-success d-block mb-2">
+
+                                                        📝 {{ devoir.titre }}
+
+                                                        <span class="ms-1">
+                                                            · limite {{ devoir.date_limite|date:"d/m/Y" }}
+                                                        </span>
+
+                                                    </a>
+
+                                                {% endfor %}
+
+                                            </div>
+
+                                        {% else %}
+
+                                            <div class="small text-muted border-top pt-3">
+                                                Aucun devoir associé à cet exercice.
+                                            </div>
+
+                                        {% endif %}
+
+                                    {% endwith %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="text-center py-4">
+
+                    <div class="display-5 mb-3">
+                        ✏️
+                    </div>
+
+                    <p class="text-muted mb-0">
+                        Aucun exercice n'est encore associé à cette leçon.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+    </div>
+
+</div>
+```
+
+</div>
+
+{% endblock %}

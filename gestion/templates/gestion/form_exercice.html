@@ -1,0 +1,107 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}
+{% if object %}Modifier l'exercice{% else %}Créer un exercice{% endif %} - Succès École
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold">
+                {% if object %}✏️ Modifier l'exercice{% else %}✏️ Créer un exercice{% endif %}
+            </h1>
+            <p class="text-muted mb-0">
+                Préparez un exercice lié à l'un de vos cours.
+            </p>
+        </div>
+
+        <a href="{% url 'liste_exercices' %}" class="btn btn-outline-secondary">
+            ← Retour
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="row g-3">
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Cours concerné</label>
+                        {{ form.cours }}
+                        {% for error in form.cours.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Titre de l'exercice</label>
+                        {{ form.titre }}
+                        {% for error in form.titre.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Consigne</label>
+                        {{ form.consigne }}
+                        {% for error in form.consigne.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Document complémentaire</label>
+                        {{ form.document }}
+
+                        {% if object and object.document %}
+                            <div class="mt-2">
+                                <span class="text-muted">Document actuel :</span>
+                                <a href="{{ object.document.url }}" target="_blank">
+                                    📄 Voir le document
+                                </a>
+                            </div>
+                        {% endif %}
+
+                        {% for error in form.document.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <hr class="my-4">
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        {% if object %}
+                            💾 Enregistrer
+                        {% else %}
+                            ✏️ Créer l'exercice
+                        {% endif %}
+                    </button>
+
+                    <a href="{% url 'liste_exercices' %}" class="btn btn-outline-secondary">
+                        Annuler
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

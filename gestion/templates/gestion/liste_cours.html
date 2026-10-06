@@ -1,0 +1,115 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}Mes cours - Succès École{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+```
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold">📚 Mes cours</h1>
+        <p class="text-muted mb-0">
+            {% if user.classe %}
+                Cours disponibles pour la classe {{ user.classe.nom }}.
+            {% else %}
+                Retrouvez ici vos cours.
+            {% endif %}
+        </p>
+    </div>
+
+    {% if user.role == "prof" %}
+        <a href="{% url 'creer_cours' %}" class="btn btn-primary">
+            ➕ Nouveau cours
+        </a>
+    {% endif %}
+</div>
+
+{% if cours %}
+
+    <div class="row g-4">
+
+        {% for cours_item in cours %}
+
+            <div class="col-md-6 col-lg-4">
+
+                <div class="card h-100 shadow-sm border-0">
+
+                    <div class="card-body">
+
+                        <div class="mb-3">
+                            <span class="badge bg-primary">
+                                {% if cours_item.matiere %}
+                                    📖 {{ cours_item.matiere.nom }}
+                                {% else %}
+                                    📖 Matière
+                                {% endif %}
+                            </span>
+
+                            {% if cours_item.classe %}
+                                <span class="badge bg-secondary">
+                                    🎓 {{ cours_item.classe.nom }}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <h4 class="fw-bold">
+                            {{ cours_item.titre }}
+                        </h4>
+
+                        <p class="text-muted">
+                            {{ cours_item.description|truncatewords:30 }}
+                        </p>
+
+                        <div class="small text-muted mb-3">
+                            📅 {{ cours_item.date_publication|date:"d/m/Y" }}
+                            {% if cours_item.professeur %}
+                                <br>
+                                👨‍🏫 {{ cours_item.professeur.username }}
+                            {% endif %}
+                        </div>
+
+                        <a href="{% url 'detail_cours' cours_item.id %}"
+                           class="btn btn-outline-primary w-100">
+                            📖 Ouvrir le cours
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body text-center py-5">
+
+            <div class="display-3 mb-3">📚</div>
+
+            <h3>Aucun cours disponible</h3>
+
+            <p class="text-muted">
+                Aucun cours n'est actuellement disponible pour votre classe.
+            </p>
+
+            {% if user.role == "prof" %}
+                <a href="{% url 'creer_cours' %}" class="btn btn-primary">
+                    ➕ Créer le premier cours
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endif %}
+```
+
+</div>
+
+{% endblock %}

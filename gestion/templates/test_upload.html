@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Test Upload avec CSRF</title>
+</head>
+<body>
+    <h1>Test Upload avec CSRF</h1>
+    <p>{{ message }}</p>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="fichier" />
+        <button type="submit">Envoyer</button>
+    </form>
+</body>
+</html>

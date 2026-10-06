@@ -1,0 +1,305 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}Espace élève - Succès École{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+```
+<!-- EN-TÊTE -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold">🎓 Bonjour {{ user.username }}</h1>
+        <p class="text-muted mb-0">
+            Bienvenue dans ton espace d'apprentissage.
+            {% if user.classe %}
+                Classe : <strong>{{ user.classe.nom }}</strong>
+            {% endif %}
+        </p>
+    </div>
+
+    <a href="{% url 'liste_cours' %}" class="btn btn-primary">
+        📚 Voir mes cours
+    </a>
+</div>
+
+<!-- STATISTIQUES -->
+<div class="row g-3 mb-4">
+
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small">📚 Mes cours</div>
+                <div class="display-6 fw-bold">{{ nombre_cours }}</div>
+                <a href="{% url 'liste_cours' %}" class="small">
+                    Voir les cours →
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small">✏️ Exercices</div>
+                <div class="display-6 fw-bold">{{ nombre_exercices }}</div>
+                <a href="{% url 'liste_exercices' %}" class="small">
+                    Voir les exercices →
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small">📝 Devoirs</div>
+                <div class="display-6 fw-bold">{{ nombre_devoirs }}</div>
+                <a href="{% url 'liste_devoirs' %}" class="small">
+                    Voir les devoirs →
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small">🔔 Notifications</div>
+                <div class="display-6 fw-bold">{{ nombre_notifications }}</div>
+                <a href="{% url 'notifications' %}" class="small">
+                    Voir les notifications →
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- DEVOIRS À FAIRE -->
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">📝 Mes devoirs à faire</h5>
+    </div>
+
+    <div class="card-body p-0">
+
+        {% if devoirs_a_faire %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th>Devoir</th>
+                            <th>Matière</th>
+                            <th>Classe</th>
+                            <th>Date limite</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for devoir in devoirs_a_faire %}
+
+                            <tr>
+
+                                <td>
+                                    <strong>{{ devoir.titre }}</strong>
+                                </td>
+
+                                <td>
+                                    {% if devoir.exercice.cours.matiere %}
+                                        {{ devoir.exercice.cours.matiere.nom }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if devoir.exercice.cours.classe %}
+                                        {{ devoir.exercice.cours.classe.nom }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {{ devoir.date_limite|date:"d/m/Y" }}
+                                </td>
+
+                                <td>
+                                    <a href="{% url 'voir_devoir' devoir.id %}"
+                                       class="btn btn-sm btn-primary">
+                                        📖 Voir le devoir
+                                    </a>
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <div class="text-center py-5">
+                <div class="display-5 mb-3">🎉</div>
+                <h5>Aucun devoir à faire</h5>
+                <p class="text-muted mb-0">
+                    Tu es à jour dans tes devoirs.
+                </p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- COURS RÉCENTS -->
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">📚 Mes cours récents</h5>
+    </div>
+
+    <div class="card-body">
+
+        {% if cours_recents %}
+
+            <div class="row g-3">
+
+                {% for cours in cours_recents %}
+
+                    <div class="col-md-4">
+
+                        <div class="card h-100 border">
+
+                            <div class="card-body">
+
+                                <h5 class="fw-bold">
+                                    {{ cours.titre }}
+                                </h5>
+
+                                <p class="small text-muted mb-2">
+
+                                    {% if cours.matiere %}
+                                        📖 {{ cours.matiere.nom }}
+                                    {% endif %}
+
+                                    {% if cours.classe %}
+                                        · 🎓 {{ cours.classe.nom }}
+                                    {% endif %}
+
+                                </p>
+
+                                <p class="text-muted">
+                                    {{ cours.description|truncatewords:20 }}
+                                </p>
+
+                                <a href="{% url 'detail_cours' cours.id %}"
+                                   class="btn btn-sm btn-outline-success">
+                                    📖 Ouvrir le cours →
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="text-center py-4">
+                <p class="text-muted mb-0">
+                    Aucun cours disponible pour le moment.
+                </p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- NOTIFICATIONS -->
+<div class="card shadow-sm border-0">
+
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">🔔 Dernières notifications</h5>
+    </div>
+
+    <div class="card-body">
+
+        {% if notifications_recentes %}
+
+            {% for notification in notifications_recentes %}
+
+                <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+
+                    <div>
+
+                        <strong>{{ notification.titre }}</strong>
+
+                        <div class="text-muted small">
+                            {{ notification.message|truncatewords:25 }}
+                        </div>
+
+                        <small class="text-muted">
+                            {{ notification.date_creation|date:"d/m/Y H:i" }}
+                        </small>
+
+                    </div>
+
+                    {% if not notification.lu %}
+                        <span class="badge bg-primary">
+                            Nouveau
+                        </span>
+                    {% else %}
+                        <span class="badge bg-secondary">
+                            Lu
+                        </span>
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+            <div class="text-center mt-3">
+                <a href="{% url 'notifications' %}"
+                   class="btn btn-outline-dark">
+                    Voir toutes les notifications
+                </a>
+            </div>
+
+        {% else %}
+
+            <div class="text-center py-4">
+                <p class="text-muted mb-0">
+                    Aucune notification pour le moment.
+                </p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+```
+
+</div>
+
+{% endblock %}

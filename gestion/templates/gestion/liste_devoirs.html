@@ -1,0 +1,211 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}Devoirs - Succès École{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+```
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        {% if user.role == "prof" %}
+            <h1 class="fw-bold">📝 Mes devoirs</h1>
+            <p class="text-muted mb-0">
+                Gérez les devoirs créés pour vos élèves.
+            </p>
+        {% else %}
+            <h1 class="fw-bold">📝 Mes devoirs</h1>
+            <p class="text-muted mb-0">
+                Retrouvez les devoirs correspondant à votre classe.
+            </p>
+        {% endif %}
+    </div>
+
+    {% if user.role == "prof" %}
+        <a href="{% url 'creer_devoir' %}" class="btn btn-primary">
+            ➕ Nouveau devoir
+        </a>
+    {% endif %}
+
+</div>
+
+
+{% if devoirs %}
+
+    <div class="row g-4">
+
+        {% for devoir in devoirs %}
+
+            <div class="col-md-6 col-lg-4">
+
+                <div class="card h-100 shadow-sm border-0">
+
+                    <div class="card-body">
+
+                        <!-- MATIÈRE / CLASSE -->
+
+                        <div class="mb-3">
+
+                            {% if devoir.exercice.cours.matiere %}
+                                <span class="badge bg-primary">
+                                    📖 {{ devoir.exercice.cours.matiere.nom }}
+                                </span>
+                            {% endif %}
+
+                            {% if devoir.exercice.cours.classe %}
+                                <span class="badge bg-secondary">
+                                    🎓 {{ devoir.exercice.cours.classe.nom }}
+                                </span>
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- TITRE -->
+
+                        <h4 class="fw-bold">
+                            {{ devoir.titre }}
+                        </h4>
+
+                        <p class="text-muted">
+                            {{ devoir.description|truncatewords:25 }}
+                        </p>
+
+
+                        <!-- EXERCICE -->
+
+                        <div class="small text-muted mb-2">
+
+                            ✏️ Exercice :
+                            <strong>
+                                {{ devoir.exercice.titre }}
+                            </strong>
+
+                        </div>
+
+
+                        <!-- DATE -->
+
+                        <div class="small mb-3">
+
+                            <strong>📅 Date limite :</strong>
+                            {{ devoir.date_limite|date:"d/m/Y" }}
+
+                        </div>
+
+
+                        {% if not devoir.actif %}
+
+                            <div class="alert alert-secondary py-2">
+                                ⏸️ Devoir inactif
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- PROFESSEUR -->
+
+                        {% if user.role == "prof" %}
+
+                            <div class="d-flex gap-2 mt-3">
+
+                                <a href="{% url 'copies_devoir' devoir.id %}"
+                                   class="btn btn-outline-primary flex-fill">
+                                    📄 Copies
+                                </a>
+
+                                <a href="{% url 'modifier_devoir' devoir.id %}"
+                                   class="btn btn-outline-secondary">
+                                    ✏️
+                                </a>
+
+                                <a href="{% url 'supprimer_devoir' devoir.id %}"
+                                   class="btn btn-outline-danger">
+                                    🗑️
+                                </a>
+
+                            </div>
+
+
+                        <!-- ÉLÈVE -->
+
+                        {% else %}
+
+                            {% if devoir.id in devoirs_soumis %}
+
+                                <div class="alert alert-success py-2">
+                                    ✅ Devoir déjà soumis
+                                </div>
+
+                                <a href="{% url 'voir_devoir' devoir.id %}"
+                                   class="btn btn-outline-primary w-100">
+                                    📖 Voir ma soumission
+                                </a>
+
+                            {% else %}
+
+                                <a href="{% url 'voir_devoir' devoir.id %}"
+                                   class="btn btn-primary w-100">
+                                    📝 Voir et faire le devoir
+                                </a>
+
+                            {% endif %}
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+
+{% else %}
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body text-center py-5">
+
+            <div class="display-3 mb-3">
+                📝
+            </div>
+
+            {% if user.role == "prof" %}
+
+                <h3>Aucun devoir créé</h3>
+
+                <p class="text-muted">
+                    Commencez par créer votre premier devoir.
+                </p>
+
+                <a href="{% url 'creer_devoir' %}"
+                   class="btn btn-primary">
+                    ➕ Créer un devoir
+                </a>
+
+            {% else %}
+
+                <h3>Aucun devoir disponible</h3>
+
+                <p class="text-muted mb-0">
+                    Aucun devoir n'est actuellement disponible pour votre classe.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+{% endif %}
+```
+
+</div>
+
+{% endblock %}
